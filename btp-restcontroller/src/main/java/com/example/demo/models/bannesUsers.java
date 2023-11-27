@@ -1,3 +1,4 @@
+
 package com.example.demo.models;
 
 import java.util.ArrayList;
@@ -5,8 +6,8 @@ import java.util.ArrayList;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="user")
-public class user {
+@Document(collection="banned_user")
+public class bannesUsers {
 
 	 private String password;
 //	 

@@ -151,6 +151,7 @@ import com.example.demo.models.comments;
 import com.example.demo.models.questions;
 import com.example.demo.models.subreddit;
 import com.example.demo.models.user;
+import com.example.demo.models.bannesUsers;
 
 
 
@@ -172,6 +173,8 @@ public class Restcontroller {
 	@Autowired
 	private user_interface useri;
 	
+	@Autowired
+	private banned_user_interface banneduseri;
 	
 	
     //Hell Hell=new Hell(5);
@@ -202,9 +205,45 @@ public class Restcontroller {
 		user temp=new user();
 		temp.setUsername(user_id);
 		Example<user> user_examp=Example.of(temp);
-		return useri.findOne(user_examp);
+		Optional<user> user1= useri.findOne(user_examp);
+		System.out.println(user1);
+		return user1;
 	
     }
+	@GetMapping("/findbanneduser/{user_id}")
+	public int findbanneduser(@PathVariable String user_id) 
+    {
+		System.out.println(user_id);
+		bannesUsers temp=new bannesUsers();
+		temp.setUsername(user_id);
+		Example<bannesUsers> user_examp=Example.of(temp);
+		Optional<bannesUsers> user1= banneduseri.findOne(user_examp);
+		System.out.println(user1.isEmpty());
+		if(user1.isEmpty())
+		return 0;
+		return 1;
+    }
+	
+	@GetMapping("/finduserbyemail/{email_id}")
+	public void finduserbyemail(@PathVariable String email_id) 
+    {
+        user temp=new user();
+		temp.setEmail_id(email_id);
+		Example<user> user_examp=Example.of(temp);
+		Optional<user> user1= useri.findOne(user_examp);
+		System.out.println(user1);
+		bannesUsers ban=new bannesUsers();
+		ban.setEmail_id(user1.get().getEmail_id());
+		ban.setPassword(user1.get().getPassword());
+		ban.setUser_type(user1.get().getUser_type());
+		ban.setUsername(user1.get().getUsername());
+//		ban.subreddit_id_list.addAll(user1.get().subreddit_id_list);
+//		ban.question_id_list.addAll(user1.get().question_id_list);
+		banneduseri.save(ban);
+		useri.deleteById(user1.get().getUsername());
+	
+    }
+	
 	
 	@GetMapping("/allsubreddit")
 	public List<subreddit> allsubreddit() 
@@ -213,6 +252,16 @@ public class Restcontroller {
 		
 		
 		return subredditi.findAll();
+		
+	
+    }
+	@GetMapping("/allusers")
+	public List<user> allUsers() 
+    {
+        //console.log('executed service')
+		
+		
+		return useri.findAll();
 		
 	
     }
